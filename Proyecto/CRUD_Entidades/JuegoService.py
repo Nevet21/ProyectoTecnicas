@@ -1,5 +1,5 @@
 import os
-from models.Juego import Juego  # Asegúrate de que la clase Juego tenga atributos nombre y tipoJuego
+from Proyecto.models.Juego import Juego  # Asegúrate de que la clase Juego tenga atributos nombre y tipoJuego
 
 class JuegoService:
     def __init__(self, archivo='juegos.txt'):

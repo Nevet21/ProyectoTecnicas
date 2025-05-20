@@ -1,6 +1,6 @@
 import os
-from models.Mesa import Mesa
-from models.Juego import Juego
+from Proyecto.models.Mesa import Mesa
+from Proyecto.models.Juego import Juego
 
 class MesaService:
     def __init__(self, archivo="mesas.txt"):

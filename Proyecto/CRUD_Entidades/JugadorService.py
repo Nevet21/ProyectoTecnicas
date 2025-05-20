@@ -1,5 +1,5 @@
 import os
-from models.Jugador import Jugador
+from Proyecto.models.Jugador import Jugador
 
 class JugadorService:
     def __init__(self, archivo="jugadores.txt"):
@@ -105,5 +105,8 @@ class JugadorService:
                 print("Jugadas agregadas.")
                 return
         print("Jugador no encontrado.")
+    
+    def obtenerJugadores(self):
+        return self.jugadores
         
         

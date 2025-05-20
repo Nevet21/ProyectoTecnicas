@@ -1,6 +1,6 @@
 import os
-from models.Historial import Historial
-from models.Mesa import Mesa
+from Proyecto.models.Historial import Historial
+from Proyecto.models.Mesa import Mesa
 
 class HistorialService:
     def __init__(self, archivo='historiales.txt'):
