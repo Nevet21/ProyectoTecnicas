@@ -1,0 +1,2 @@
+M1, blackJack, 20, True
+M2, blackJack, 20, True

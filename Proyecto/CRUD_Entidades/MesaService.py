@@ -68,8 +68,7 @@ class MesaService:
     def buscarMesa(self, mesa_id: str):
         for mesa in self.mesas:
             if mesa.mesa_id == mesa_id:
-                print(f"Mesa encontrada: ID: {mesa.mesa_id}, Juego: {mesa.juego.get_nombre()}, Jugadores: {len(mesa.jugadores)}, Activa: {mesa.activa}")
-                return
+                return mesa
         print(f"Mesa con ID {mesa_id} no encontrada.")
 
     def actualizarMesa(self, mesa_id: str, nombre_juego=None, canJugadores=None, activa=None):

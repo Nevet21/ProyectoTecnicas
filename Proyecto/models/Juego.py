@@ -21,7 +21,4 @@ class Juego(ABC):
     def set_tipoJuego(self, tipoJuego):
         self.tipoJuego = tipoJuego
 
-    # Método abstracto que será implementado por los juegos específicos
-    @abstractmethod
-    def jugar(self):
-        pass
+

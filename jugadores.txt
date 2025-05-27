@@ -1,9 +1,2 @@
-sergio, J1, 1000.0
-lubier1, J2, 2000.0
-lubier2, J3, 3000.0
-lubier3, J4, 4000.0
-lubier, J5, 5000.0
-lubier, J6, 6000.0
-lubier, J7, 7000.0
-lubier, J8, 8000.0
-lubier, J9, 9000
+lubier, J1, 2300.0, 0.0, GANO|100.0|GANO|100.0|EMPATO|1000.0|Perdió|1000.0|Perdió|1000.0
+andres, J2, 8200.0, 0.0, Perdió|200.0|Perdió|4000.0|EMPATO|4000.0|GANO|2000.0|GANO|2000.0
