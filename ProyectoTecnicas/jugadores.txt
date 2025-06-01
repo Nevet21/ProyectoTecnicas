@@ -1,2 +1,0 @@
-Lubierto, J1, 26380.0, 400.0, BlackJack|PERDIO|-500.0|BlackJack|GANO|600.0|BlackJack|PERDIO|-400.0|Dado Mentiroso (Ganador)|GANO|310|Dado Mentiroso (Ganador)|GANO|410|Dado Mentiroso (Ganador)|GANO|510
-andres, J2, 8160.0, 600.0, BlackJack|GANO|600.0|BlackJack|PERDIO|-300.0|BlackJack|GANO|1200.0|PERDIO|100|PERDIO|100|PERDIO|100
