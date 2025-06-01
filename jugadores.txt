@@ -1,2 +1,2 @@
-lubier, J1, 2300.0, 0.0, GANO|100.0|GANO|100.0|EMPATO|1000.0|Perdió|1000.0|Perdió|1000.0
-andres, J2, 8200.0, 0.0, Perdió|200.0|Perdió|4000.0|EMPATO|4000.0|GANO|2000.0|GANO|2000.0
+Lubierto, J1, 26380.0, 400.0, BlackJack|PERDIO|-500.0|BlackJack|GANO|600.0|BlackJack|PERDIO|-400.0|Dado Mentiroso (Ganador)|GANO|310|Dado Mentiroso (Ganador)|GANO|410|Dado Mentiroso (Ganador)|GANO|510
+andres, J2, 8160.0, 600.0, BlackJack|GANO|600.0|BlackJack|PERDIO|-300.0|BlackJack|GANO|1200.0|PERDIO|100|PERDIO|100|PERDIO|100

@@ -3,27 +3,34 @@ import random
 from Proyecto.CRUD_Entidades.JugadorService import JugadorService
 from Proyecto.models.Jugador import Jugador
 
-class blackJack(Juego):
+class BlackJack(Juego):
     def __init__(self, nombre, tipoJuego, jugadores):
-        # Hereda nombre y tipoJuego usando super()
         super().__init__(nombre, tipoJuego)
-        # Atributo propio de BlackJack
         self.jugadores = jugadores
-        self.baraja = []  # Inicializamos la baraja como atributo de la clase
-        self.cartasJugadores=[]
-        self.crupier=[]
-        self.serviceJugador=JugadorService()
+        self.baraja = []
+        self.cartasJugadores = []
+        self.crupier = []
+        self.serviceJugador = JugadorService()
+        self.apuestas = {}  # Diccionario para guardar las apuestas
     
-    def  apuesta(self):
+    def apuesta(self):
+        """Maneja las apuestas iniciales de los jugadores"""
         for jugador in self.jugadores:
-            print(str(jugador.nombre)+ " su saldo es de: "+str(jugador.saldo))
-            apuesta=int(input("Ingrese  su apuesta: "))
-            if apuesta>jugador.saldo:
-                print("no hay fondos disponibles  ")
-            else:
-                jugador.apuesta=apuesta
-                
-                
+                print(f"{jugador.nombre} su saldo es de: {jugador.saldo}")
+                while True:
+                    try:
+                        apuesta = float(input(f"Ingrese su apuesta (máx {jugador.saldo}): "))
+                        if apuesta <= 0 or apuesta > jugador.saldo:
+                            print("Apuesta inválida. Intente nuevamente.")
+                            continue
+                        
+                        # Guardar la apuesta y restar del saldo
+                        self.apuestas[jugador.jugador_id] = apuesta
+                        jugador.saldo -= apuesta
+                        jugador.apuesta = apuesta
+                        break
+                    except ValueError:
+                        print("Debe ingresar un número válido.")
     
     def crear_Mazo(self, baraja=None, aux=0, cartas=None, contador=0):
         if baraja is None:
@@ -129,26 +136,54 @@ class blackJack(Juego):
 
 
                     
-    def turnoCrupiert(self):
-        suma=self.calcular_suma_cartas(self.crupier)
-        if suma<=16:
-            cartaNueva=self.repartirCarta([],1)
-            self.crupier.extend(cartaNueva)
-        if suma>=17  and suma<=21:
-            self.gameOver(suma)
-        else:
-            for i in range(len(self.cartasJugadores)):
-                jugador, cartas = self.cartasJugadores[i]
-                sumaJugador=self.calcular_suma_cartas(cartas)
-                if sumaJugador<=21:
-                    self.serviceJugador.agregar_jugadas(("GANO",str(jugador.apuesta)),jugador.jugador_id)
-                    print("El jugador "+  str(jugador.nombre)+" GANO!!!")
-                    self.serviceJugador.actualizar_saldo(jugador.jugador_id,(jugador.saldo+jugador.apuesta))
-                    
-                    
+    def calcular_resultados(self):
+            """Calcula los resultados finales y actualiza saldos"""
+            suma_crupier = self.calcular_suma_cartas(self.crupier)
+            resultados = []
+            
+            for jugador, cartas in self.cartasJugadores:
+                suma_jugador = self.calcular_suma_cartas(cartas)
+                apuesta = self.apuestas[jugador.jugador_id]
                 
+                if suma_jugador > 21:  # Jugador pierde
+                    resultado = "PERDIO"
+                    ganancia = -apuesta
+                    jugador.juegos_perdidos += 1
+                elif suma_crupier > 21 or suma_jugador > suma_crupier:  # Jugador gana
+                    resultado = "GANO"
+                    ganancia = apuesta * 2  # Gana el doble (apuesta + ganancia)
+                    jugador.saldo += ganancia
+                    jugador.juegos_ganados += 1
+                elif suma_jugador < suma_crupier:  # Jugador pierde
+                    resultado = "PERDIO"
+                    ganancia = -apuesta
+                    jugador.juegos_perdidos += 1
+                else:  # Empate
+                    resultado = "EMPATO"
+                    ganancia = 0
+                    jugador.saldo += apuesta  # Devuelve la apuesta
+                
+                resultados.append({
+                    'jugador': jugador,
+                    'resultado': resultado,
+                    'ganancia': ganancia,
+                    'suma_jugador': suma_jugador,
+                    'suma_crupier': suma_crupier
+                })
+                
+                # Registrar jugada
+                jugador.agregar_jugada(f"BlackJack|{resultado}|{ganancia}")
+            
+            return resultados
+
+    def turnoCrupiert(self):
+        suma = self.calcular_suma_cartas(self.crupier)
+        while suma <= 16:
+            cartaNueva = self.repartirCarta([], 1)
+            self.crupier.extend(cartaNueva)
+            suma = self.calcular_suma_cartas(self.crupier)
         
-                        
+        return self.calcular_resultados()
                 
             
     def gameOver(self,sumaC):

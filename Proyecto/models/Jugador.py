@@ -1,16 +1,33 @@
 from collections import deque
+from typing import List, Dict, Any
 
 class Jugador:
-    def __init__(self, nombre: str, jugador_id: str, saldo: float,apuesta:float, jugadas=None):
+    def __init__(self, nombre: str, jugador_id: str, saldo: float, apuesta: float, jugadas=None, historial=None):
         self._nombre = nombre
         self._jugador_id = jugador_id
         self._saldo = saldo
         self._jugadas = deque(jugadas if jugadas else [], maxlen=10)
-        self._apuesta=apuesta
+        self._apuesta = apuesta
+        self._historial = historial if historial else []
+        self.juegos_ganados = 0
+        self.juegos_perdidos = 0
+
         
+    @property
+    def historial(self) -> List[Dict[str, Any]]:
+        return self._historial
+    
+    @historial.setter
+    def historial(self, value: List[Dict[str, Any]]):
+        self._historial = value
+        
+    def agregar_historial(self, evento: Dict[str, Any]):
+        """Agrega un evento al historial del jugador"""
+        self._historial.append(evento)
         
         # Getter para apuesta
     @property
+    
     def apuesta(self) -> float:
         """Devuelve el valor actual de la apuesta como float."""
         return self._apuesta

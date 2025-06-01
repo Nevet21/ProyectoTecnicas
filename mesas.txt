@@ -1,2 +1,3 @@
-M1, blackJack, 20, True
-M2, blackJack, 20, True
+M1; BlackJack; 5; True; J1, J2
+M2; Dado Mentiroso; 2; True; J1, J2
+M3; Dado Mentiroso; 2; True; 
