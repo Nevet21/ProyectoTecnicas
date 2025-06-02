@@ -5,7 +5,10 @@ from Proyecto.models.Juego import Juego
 from Proyecto.models.Jugador import Jugador
 
 class MesaService:
+    """Service for managing game tables (mesas) with file persistence"""
+    
     def __init__(self, archivo="mesas.txt"):
+        """Initialize with data file path. Creates file if nonexistent"""
         self.archivo = archivo
         self.mesas = []
         
@@ -16,6 +19,7 @@ class MesaService:
         self._cargar_mesas()
 
     def _cargar_mesas(self):
+        """Load tables from data file into memory"""
         self.mesas.clear()
         with open(self.archivo, "r") as f:
             for linea in f:
@@ -43,6 +47,7 @@ class MesaService:
                     print(f"[!] Error al cargar mesa: {linea}. Error: {e}")
 
     def _guardar_mesas(self):
+        """Persist all tables to data file"""
         with open(self.archivo, "w") as f:
             for mesa in self.mesas:
                 jugadores_ids = [jugador.jugador_id for jugador in mesa.jugadores]
@@ -55,6 +60,7 @@ class MesaService:
                 f.write(linea + "\n")
 
     def _generar_nuevo_id(self):
+        """Generate sequential table ID (M1, M2, etc.)"""
         if not self.mesas:
             return "M1"
         ultimo_id = self.mesas[-1].mesa_id
@@ -62,7 +68,7 @@ class MesaService:
         return f"M{numero}"
 
     def crearMesa(self, juego: Juego, canJugadores: int, jugadores=None, activa=True):
-        # Verificar límites para Dado Mentiroso
+        """Create new game table with validation"""
         if hasattr(juego, 'min_jugadores') and hasattr(juego, 'max_jugadores'):
             if canJugadores < juego.min_jugadores or canJugadores > juego.max_jugadores:
                 print(f"Error: Este juego requiere entre {juego.min_jugadores} y {juego.max_jugadores} jugadores")
@@ -75,6 +81,7 @@ class MesaService:
         return nueva_mesa
 
     def borrarMesa(self, mesa_id: str):
+        """Delete table by ID. Returns success status"""
         original = len(self.mesas)
         self.mesas = [mesa for mesa in self.mesas if mesa.mesa_id != mesa_id]
         if len(self.mesas) < original:
@@ -83,12 +90,14 @@ class MesaService:
         return False
 
     def buscarMesa(self, mesa_id: str):
+        """Find table by ID. Returns Mesa or None"""
         for mesa in self.mesas:
             if mesa.mesa_id == mesa_id:
                 return mesa
         return None
 
     def actualizarMesa(self, mesa_id: str, nombre_juego=None, canJugadores=None, activa=None):
+        """Update table properties. Returns success status"""
         mesa = self.buscarMesa(mesa_id)
         if mesa:
             if nombre_juego:
@@ -102,6 +111,7 @@ class MesaService:
         return False
 
     def agregar_jugador_a_mesa(self, mesa_id: str, jugador: Jugador):
+        """Add player to table or waiting queue. Returns (success, message)"""
         mesa = self.buscarMesa(mesa_id)
         if not mesa:
             return False, "Mesa no encontrada"
@@ -115,6 +125,7 @@ class MesaService:
             return True, f"{jugador.nombre} fue agregado a la cola de espera de la mesa {mesa_id}"
 
     def mover_siguiente_jugador(self, mesa_id: str):
+        """Move next player from queue to table. Returns (success, message)"""
         mesa = self.buscarMesa(mesa_id)
         if not mesa:
             return False, "Mesa no encontrada"
@@ -131,12 +142,14 @@ class MesaService:
         return True, f"{jugador.nombre} ha sido movido a la mesa {mesa_id}"
 
     def obtener_cola_espera(self, mesa_id: str):
+        """Get waiting queue for table. Returns list of players"""
         mesa = self.buscarMesa(mesa_id)
         if not mesa:
             return []
         return mesa.obtener_cola_espera()
 
     def cargar_jugadores_en_mesas(self, jugador_service):
+        """Link player objects to tables after loading from file"""
         for mesa in self.mesas:
             if hasattr(mesa, '_jugadores_ids'):
                 for jugador_id in mesa._jugadores_ids:

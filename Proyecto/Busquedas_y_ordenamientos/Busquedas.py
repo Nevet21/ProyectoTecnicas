@@ -1,33 +1,33 @@
-def busquedaLineal(objetivo,lista,nombreDato,contador=0):
+def busquedaLineal(objetivo, lista, nombreDato, contador=0):
+    """Linear search implementation (recursive)"""
     
-    if len(lista)>=contador:## caso limite,  si sse llega al final de la lista se termina el llamado recursivvo
-        print("El jugador objetivo no existe")
+    if len(lista) >= contador:  # Base case: reached end of list
+        print("Target player not found")
         return None
     
-    if getattr(lista[contador], nombreDato) == objetivo: ## getAttr me permite volver la funcion mas dinamica para todos los atributos de ese objeto
-        return lista[contador]   ##caso Base cuando en la lista se encuentra el obejtivo se finaliza el llamado recursivo
+    if getattr(lista[contador], nombreDato) == objetivo:  # Base case: target found
+        return lista[contador]   
     
-    
-    
-    return busquedaLineal(objetivo,lista,nombreDato, contador+1) ## llamada recursiva incrementando en 1 el contador para una nueva busqueda
+    # Recursive call with incremented counter
+    return busquedaLineal(objetivo, lista, nombreDato, contador+1)
 
 
-def busquedaBinaria(objetivo,lista,nombreDato):
-    valor=len(lista)//2 ##se busca el valor de la mitad de la lista
+def busquedaBinaria(objetivo, lista, nombreDato):
+    """Binary search implementation (recursive)"""
+    valor = len(lista) // 2  # Get middle index
     
-    if len(lista)<1:
-        print("no se encontro el dato")  ## caso limite cuando la lista essta vacia
+    if len(lista) < 1:  # Base case: empty list
+        print("Data not found")
         return None
     
-    if getattr(lista[valor], nombreDato)== objetivo: ##  caso base cuando encontramos el valor objetivo
+    if getattr(lista[valor], nombreDato) == objetivo:  # Base case: target found
         return lista[valor]
     
-    if objetivo < getattr(lista[valor],nombreDato):   ## se mira si se divide la lissta izquierda o derecha dependiendo si valor es mayor o menor a objetivo
-        sublista=lista[0:valor] 
+    # Determine which sublist to search next
+    if objetivo < getattr(lista[valor], nombreDato):
+        sublista = lista[0:valor]  # Search left half
     else:
-        sublista=lista[valor+1:len(lista)]
+        sublista = lista[valor+1:len(lista)]  # Search right half
     
-    return busquedaBinaria(objetivo,sublista,nombreDato)
-
-    
-    
+    # Recursive call with new sublist
+    return busquedaBinaria(objetivo, sublista, nombreDato)

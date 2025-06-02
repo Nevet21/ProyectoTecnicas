@@ -2,6 +2,7 @@ from Proyecto.CRUD_Entidades.JugadorService import JugadorService
 from Proyecto.CRUD_Entidades.HistorialService import HistorialService
 from Proyecto.CRUD_Entidades.JuegoService import JuegoService
 from Proyecto.Busquedas_y_ordenamientos.Ordenamientos import burbuja, seleccion, insercion
+from Proyecto.Busquedas_y_ordenamientos.Busquedas import busquedaLineal, busquedaBinaria
 
 class ReporteCasino:
 
@@ -11,49 +12,50 @@ class ReporteCasino:
         self.juego_service = juego_service
 
     def jugadores_mayor_saldo(self):
-        jugadores = self.jugador_service.obtener_jugadores()
-        ordenados = burbuja(jugadores, "saldo")
-        print("\n--- Jugadores con mayor saldo ---")
-        for j in ordenados[:10]:
+        players = self.jugador_service.obtener_jugadores()
+        sorted_players = burbuja(players, "saldo")
+        print("\n--- Players with the Highest Balance ---")
+        for j in sorted_players[:10]:
             print(f"{j.nombre} - ${j.saldo}")
 
     def historial_jugador(self):
-        jugador_id = input("Ingrese el ID del jugador: ").strip()
-        encontrados = 0
-        print(f"\n=== HISTORIAL DEL JUGADOR {jugador_id} ===")
-        for historial in self.historial_service.historiales:
-            resultado = historial.get_resultado()
-            if resultado and "jugadores" in resultado and jugador_id in resultado["jugadores"]:
-                historial.mostrar_info()
-                encontrados += 1
+        player_id = input("Enter the player ID: ").strip()
+        found = 0
+        print(f"\n=== PLAYER HISTORY {player_id} ===")
+        for history in self.historial_service.historiales:
+            result = history.get_resultado()
+            if result and "jugadores" in result and player_id in result["jugadores"]:
+                history.mostrar_info()
+                found += 1
                 print("-" * 50)
-        if encontrados == 0:
-            print("No se encontró historial para ese jugador.")
+        if found == 0:
+            print("No history found for that player.")
 
     def jugadores_mas_victorias(self):
-        jugadores = self.jugador_service.obtener_jugadores()
-        ordenados = insercion(jugadores, "juegos_ganados")
-        print("\n--- Jugadores con más victorias ---")
-        for j in ordenados[:10]:
-            print(f"{j.nombre} - {j.juegos_ganados} victorias")
+        players = self.jugador_service.obtener_jugadores()
+        sorted_players = insercion(players, "juegos_ganados")
+        print("\n--- Players with the Most Wins ---")
+        for j in sorted_players[:10]:
+            print(f"{j.nombre} - {j.juegos_ganados} wins")
 
     def jugadores_con_mas_perdidas(self):
-        jugadores = self.jugador_service.obtener_jugadores()
-        ordenados = seleccion(jugadores, "juegos_perdidos")
-        print("\n--- Jugadores con más derrotas ---")
-        for j in ordenados[:10]:
-            print(f"{j.nombre} - {j.juegos_perdidos} derrotas")
+        players = self.jugador_service.obtener_jugadores()
+        sorted_players = seleccion(players, "juegos_perdidos")
+        print("\n--- Players with the Most Losses ---")
+        for j in sorted_players[:10]:
+            print(f"{j.nombre} - {j.juegos_perdidos} losses")
 
     def juegos_mas_participados(self):
-        conteo = {}
+        count = {}
         for h in self.historial_service.historiales:
             try:
-                mesa = h.get_mesa()
-                if mesa and mesa.juego:
-                    nombre_juego = mesa.juego.get_nombre()
-                    conteo[nombre_juego] = conteo.get(nombre_juego, 0) + 1
+                table = h.get_mesa()
+                if table and table.juego:
+                    game_name = table.juego.get_nombre()
+                    count[game_name] = count.get(game_name, 0) + 1
             except AttributeError:
-                continue  # Saltar si falta información
-        print("\n--- Juegos con más participaciones ---")
-        for juego, total in sorted(conteo.items(), key=lambda x: x[1], reverse=True):
-            print(f"{juego}: {total} participaciones")
+                continue  # Skip if data is missing
+        print("\n--- Most Participated Games ---")
+        for game, total in sorted(count.items(), key=lambda x: x[1], reverse=True):
+            print(f"{game}: {total} participations")
+

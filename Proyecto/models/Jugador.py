@@ -2,42 +2,62 @@ from collections import deque
 from typing import List, Dict, Any
 
 class Jugador:
+    """Class representing a casino player with game history and statistics"""
+    
     def __init__(self, nombre: str, jugador_id: str, saldo: float, apuesta: float, jugadas=None, historial=None):
-        self._nombre = nombre
-        self._jugador_id = jugador_id
-        self._saldo = saldo
-        self._jugadas = deque(jugadas if jugadas else [], maxlen=10)
-        self._apuesta = apuesta
-        self._historial = historial if historial else []
-        self.juegos_ganados = 0
-        self.juegos_perdidos = 0
-
+        """
+        Initialize a player instance
         
+        Args:
+            nombre: Player name
+            jugador_id: Unique player identifier
+            saldo: Current balance
+            apuesta: Current bet amount
+            jugadas: Recent moves (optional)
+            historial: Game history (optional)
+        """
+        self._nombre = nombre  # Player name
+        self._jugador_id = jugador_id  # Unique ID
+        self._saldo = saldo  # Current balance
+        self._jugadas = deque(jugadas if jugadas else [], maxlen=10)  # Last 10 moves
+        self._apuesta = apuesta  # Current bet amount
+        self._historial = historial if historial else []  # Game history
+        self.juegos_ganados = 0  # Games won counter
+        self.juegos_perdidos = 0  # Games lost counter
+
     @property
     def historial(self) -> List[Dict[str, Any]]:
+        """Get player's game history (list of event dictionaries)"""
         return self._historial
     
     @historial.setter
     def historial(self, value: List[Dict[str, Any]]):
+        """Set player's game history"""
         self._historial = value
         
     def agregar_historial(self, evento: Dict[str, Any]):
-        """Agrega un evento al historial del jugador"""
+        """Add a game event to player's history (Spanish method name preserved)"""
         self._historial.append(evento)
         
-        # Getter para apuesta
     @property
-    
     def apuesta(self) -> float:
-        """Devuelve el valor actual de la apuesta como float."""
+        """Get current bet amount (returns float)"""
         return self._apuesta
 
-    # Setter para apuesta (con validación para float)
     @apuesta.setter
     def apuesta(self, valor: float) -> None:
-        """Establece una nueva apuesta, validando que sea un float no negativo."""
+        """
+        Set new bet amount with validation
+        
+        Args:
+            valor: New bet amount (must be non-negative number)
+            
+        Raises:
+            TypeError: If value cannot be converted to float
+            ValueError: If value is negative
+        """
         try:
-            valor = float(valor)  # Convertimos a float (acepta "10.5" o 10)
+            valor = float(valor)  # Convert to float
         except (TypeError, ValueError):
             raise TypeError("La apuesta debe ser un número (float o int).")
         
@@ -45,48 +65,52 @@ class Jugador:
             raise ValueError("La apuesta no puede ser negativa.")
         self._apuesta = valor
 
-    # Getter y Setter para nombre
     @property
     def nombre(self):
+        """Get player name"""
         return self._nombre
 
     @nombre.setter
     def nombre(self, value):
+        """Set player name"""
         self._nombre = value
 
-    # Getter y Setter para jugador_id
     @property
     def jugador_id(self):
+        """Get player ID"""
         return self._jugador_id
 
     @jugador_id.setter
     def jugador_id(self, value):
+        """Set player ID"""
         self._jugador_id = value
 
-    # Getter y Setter para saldo
     @property
     def saldo(self):
+        """Get current balance"""
         return self._saldo
 
     @saldo.setter
     def saldo(self, value):
+        """Set current balance"""
         self._saldo = value
 
-    # Getter y Setter para jugadas
     @property
     def jugadas(self):
+        """Get recent moves (as list)"""
         return list(self._jugadas)
 
     @jugadas.setter
     def jugadas(self, value):
+        """Set recent moves (converts to deque with maxlen=10)"""
         self._jugadas = deque(value, maxlen=10)
 
-    # Método para agregar una jugada
     def agregar_jugada(self, jugada: str):
+        """Add a move to recent moves (Spanish method name preserved)"""
         self._jugadas.append(jugada)
 
-    # Método para mostrar información del jugador
     def mostrarInfo(self):
+        """Display player information (Spanish method name preserved)"""
         print(f"Nombre: {self.nombre}")
         print(f"ID: {self.jugador_id}")
         print(f"Saldo: {self.saldo}")

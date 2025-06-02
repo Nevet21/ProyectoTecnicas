@@ -1,2 +1,4 @@
-Lubierto, J1, 26380.0, 400.0, BlackJack|PERDIO|-500.0|BlackJack|GANO|600.0|BlackJack|PERDIO|-400.0|Dado Mentiroso (Ganador)|GANO|310|Dado Mentiroso (Ganador)|GANO|410|Dado Mentiroso (Ganador)|GANO|510
-andres, J2, 8160.0, 600.0, BlackJack|GANO|600.0|BlackJack|PERDIO|-300.0|BlackJack|GANO|1200.0|PERDIO|100|PERDIO|100|PERDIO|100
+Lubierto, J1, 26970.0, 200.0, -300.0|BlackJack|GANO|600.0|BlackJack|GANO|200.0|BlackJack|PERDIO|-100.0|BlackJack|GANO|400.0|Dado Mentiroso (Ganador)|GANO|10|Dado Mentiroso (Ganador)|GANO|90|Dado Mentiroso (Ganador)|GANO|190
+andres, J2, 8470.0, 100.0, 100|BlackJack|GANO|400.0|BlackJack|GANO|400.0|BlackJack|EMPATO|0|BlackJack|GANO|200.0|PERDIO|190|PERDIO|190|PERDIO|190
+Carlos Antonio, J3, 1000.0, 200.0
+Monica, J4, 1000.0, 100.0

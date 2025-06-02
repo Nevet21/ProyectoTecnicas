@@ -16,26 +16,26 @@ class DadoMentiroso(Juego):
         self.dados_jugadores = {}
         self.turno_actual = 0
         self.ultima_apuesta = None
-        self.resultados_jugadores = {}  # Diccionario para acumular resultados {jugador_id: balance}
+        self.resultados_jugadores = {}  # Dictionary to store results {player_id: balance}
 
     def repartir_dados_iniciales(self):
-        """Reparte 5 dados iniciales a cada jugador"""
+        """Deals 5 initial dice to each player"""
         self.dados_jugadores = {
             jugador.jugador_id: [random.randint(1, 6) for _ in range(5)]
             for jugador in self.jugadores
         }
-        # Inicializar el registro de resultados
+        # Initialize the result log
         self.resultados_jugadores = {jugador.jugador_id: 0 for jugador in self.jugadores}
 
     def _actualizar_dados_todos(self):
-        """Actualiza TODOS los dados de TODOS los jugadores aleatoriamente"""
+        """Randomly updates ALL dice for ALL players"""
         for jugador_id in self.dados_jugadores:
             cantidad_dados = len(self.dados_jugadores[jugador_id])
             if cantidad_dados > 0:
                 self.dados_jugadores[jugador_id] = [random.randint(1, 6) for _ in range(cantidad_dados)]
 
     def iniciar_partida(self, mesa: Mesa, historial_service):
-        """Inicia una nueva partida"""
+        """Starts a new game"""
         if not mesa or len(mesa.jugadores) < self.min_jugadores:
             return False
         
@@ -51,11 +51,11 @@ class DadoMentiroso(Juego):
 
     def _registrar_resultado(self, jugador_id, cantidad, es_ganador=False):
         """
-        Registra el resultado financiero de un jugador
+        Records a player's financial result
         Args:
-            jugador_id: ID del jugador
-            cantidad: Monto a registrar
-            es_ganador: True si es ganancia, False si es pérdida
+            jugador_id: Player's ID
+            cantidad: Amount to record
+            es_ganador: True if it's a win, False if it's a loss
         """
         if es_ganador:
             self.resultados_jugadores[jugador_id] += cantidad
@@ -63,40 +63,40 @@ class DadoMentiroso(Juego):
             self.resultados_jugadores[jugador_id] -= cantidad
 
     def _siguiente_turno(self):
-        """Avanza al siguiente turno"""
+        """Advances to the next turn"""
         self.turno_actual = (self.turno_actual + 1) % len(self.jugadores)
 
     def _contar_dados_mesa(self, jugadores=None, total_dados=None, index=0):
         """
-        Cuenta recursivamente todos los dados en juego
+        Recursively counts all dice in play
         Args:
-            jugadores: Lista de jugadores (se auto-provee en llamadas recursivas)
-            total_dados: Diccionario acumulador (se auto-provee)
-            index: Índice del jugador actual (se auto-provee)
+            jugadores: List of players (self-provided in recursive calls)
+            total_dados: Accumulator dictionary (self-provided)
+            index: Current player index (self-provided)
         Returns:
-            Diccionario con el conteo de dados por valor {1: 3, 2: 5, ...}
+            Dictionary with dice count per value {1: 3, 2: 5, ...}
         """
-        # Inicialización en la primera llamada
+        # Initialization in the first call
         if jugadores is None:
             jugadores = self.jugadores
         if total_dados is None:
             total_dados = {}
         
-        # Caso base: hemos procesado todos los jugadores
+        # Base case: all players processed
         if index >= len(jugadores):
             return total_dados
         
         jugador = jugadores[index]
         
-        # Procesar dados del jugador actual
+        # Process current player's dice
         for dado in self.dados_jugadores[jugador.jugador_id]:
             total_dados[dado] = total_dados.get(dado, 0) + 1
         
-        # Llamada recursiva para el siguiente jugador
+        # Recursive call for the next player
         return self._contar_dados_mesa(jugadores, total_dados, index + 1)
 
     def hacer_apuesta(self, jugador_id, cantidad, valor, es_segura=False):
-        """Realiza una apuesta normal o segura"""
+        """Makes a normal or safe bet"""
         jugador_actual = self.jugadores[self.turno_actual]
         if jugador_id != jugador_actual.jugador_id:
             return False, "No es tu turno"
@@ -118,13 +118,13 @@ class DadoMentiroso(Juego):
         return True, mensaje
 
     def _apuesta_segura(self, jugador_id, cantidad, valor):
-        """Maneja una apuesta segura con verificación exacta"""
+        """Handles a safe bet with exact verification"""
         total_dados = self._contar_dados_mesa()
         conteo_real = total_dados.get(valor, 0)
         jugador = next(j for j in self.jugadores if j.jugador_id == jugador_id)
         
         if conteo_real == cantidad:
-            # Apuesta correcta - todos pierden un dado
+            # Correct bet - all lose one die
             for j in self.jugadores:
                 if self.dados_jugadores[j.jugador_id]:
                     self.dados_jugadores[j.jugador_id].pop()
@@ -139,7 +139,7 @@ class DadoMentiroso(Juego):
             self._actualizar_dados_todos()
             mensaje = f"¡Correcto! Había {conteo_real} dados de {valor}"
         else:
-            # Apuesta incorrecta - jugador pierde un dado
+            # Incorrect bet - player loses a die
             if self.dados_jugadores[jugador_id]:
                 self.dados_jugadores[jugador_id].pop()
             
@@ -154,7 +154,7 @@ class DadoMentiroso(Juego):
         return True, mensaje
 
     def desconfiar(self, jugador_id):
-        """Maneja la acción de desconfiar de una apuesta"""
+        """Handles the action of challenging a bet"""
         if jugador_id != self.jugadores[self.turno_actual].jugador_id:
             return False, "No es tu turno"
         
@@ -168,14 +168,14 @@ class DadoMentiroso(Juego):
         jugador_actual = self.jugadores[self.turno_actual]
         jugador_anterior = self.jugadores[(self.turno_actual - 1) % len(self.jugadores)]
         
-        # Construir el mensaje con los dados revelados
+        # Build message with revealed dice
         mensaje_dados = "\n=== DADOS REVELADOS ===\n"
         for jugador in self.jugadores:
             mensaje_dados += f"{jugador.nombre}: {self.dados_jugadores[jugador.jugador_id]}\n"
         mensaje_dados += f"\nTotal de dados de {valor}: {conteo_real}\n"
         
         if conteo_real >= cantidad:
-            # Desconfianza incorrecta - jugador actual pierde un dado
+            # Wrong challenge - current player loses a die
             if self.dados_jugadores[jugador_actual.jugador_id]:
                 self.dados_jugadores[jugador_actual.jugador_id].pop()
             
@@ -187,7 +187,7 @@ class DadoMentiroso(Juego):
             
             resultado = f"{mensaje_dados}¡Error! Había {conteo_real} dados de {valor}. {jugador_actual.nombre} pierde un dado."
         else:
-            # Desconfianza correcta - jugador anterior pierde un dado
+            # Correct challenge - previous player loses a die
             if self.dados_jugadores[jugador_anterior.jugador_id]:
                 self.dados_jugadores[jugador_anterior.jugador_id].pop()
             
@@ -209,7 +209,7 @@ class DadoMentiroso(Juego):
         return True, resultado
 
     def _verificar_ganador(self):
-        """Verifica si queda un solo jugador con dados y registra resultados finales"""
+        """Checks if only one player has dice left and records final results"""
         jugadores_con_dados = [j for j in self.jugadores if len(self.dados_jugadores[j.jugador_id]) > 0]
         
         if len(jugadores_con_dados) == 1:
@@ -218,7 +218,7 @@ class DadoMentiroso(Juego):
             ganador.saldo += premio
             self._registrar_resultado(ganador.jugador_id, premio, True)
             
-            # Registrar solo el resultado final para cada jugador
+            # Log only final result for each player
             for jugador in self.jugadores:
                 total = abs(self.resultados_jugadores[jugador.jugador_id])
                 if jugador.jugador_id == ganador.jugador_id:
@@ -226,7 +226,7 @@ class DadoMentiroso(Juego):
                 else:
                     jugador.agregar_jugada(f"PERDIO|{total}")
             
-            # Guardar historial
+            # Save game history
             resultado = {
                 'ganador': ganador.jugador_id,
                 'nombre': ganador.nombre,
@@ -251,7 +251,7 @@ class DadoMentiroso(Juego):
         return False
 
     def obtener_estado(self, jugador_id):
-        """Devuelve el estado actual del juego para un jugador"""
+        """Returns the current game state for a player"""
         return {
             'jugadores': [{
                 'jugador_id': j.jugador_id,
@@ -266,13 +266,13 @@ class DadoMentiroso(Juego):
     
     def obtener_estrategia_recomendada(self, jugador_id: str) -> List[Tuple[Tuple[int, int], bool]]:
         """
-        Obtiene una secuencia recomendada de apuestas usando backtracking.
+        Gets a recommended bet sequence using backtracking.
         
         Args:
-            jugador_id: ID del jugador para el que se calcula la estrategia
+            jugador_id: Player's ID for which the strategy is calculated
             
         Returns:
-            Lista de tuplas ((cantidad, valor), es_segura) con la secuencia recomendada
+            List of tuples ((amount, value), is_safe) with the recommended sequence
         """
         if jugador_id not in self.dados_jugadores:
             return []
@@ -280,14 +280,14 @@ class DadoMentiroso(Juego):
         dados_jugador = self.dados_jugadores[jugador_id]
         saldo_jugador = next(j.saldo for j in self.jugadores if j.jugador_id == jugador_id)
         
-        # Generar apuestas posibles basadas en los dados y última apuesta
+        # Generate possible bets based on current dice and last bet
         apuestas_posibles = EstrategiaDadoMentiroso.generar_apuestas_posibles(
             dados_jugador, self.ultima_apuesta)
         
         if not apuestas_posibles:
             return []
         
-        # Crear estrategia y encontrar mejor secuencia
+        # Create strategy and find best sequence
         estrategia = EstrategiaDadoMentiroso(saldo_jugador, apuestas_posibles)
         mejor_secuencia, _ = estrategia.encontrar_mejor_estrategia(max_profundidad=4)
         
